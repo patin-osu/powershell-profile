@@ -4,26 +4,17 @@
 # Initial GitHub.com connectivity check with 1 second timeout
 $canConnectToGitHub = Test-Connection patin.home -Count 1 -Quiet -TimeoutSeconds 1
 
-# Import Modules and External Profiles
-# Ensure Terminal-Icons module is installed before importing
-if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
-    Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
-}
-Import-Module -Name Terminal-Icons
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-    Import-Module "$ChocolateyProfile"
-}
-
 # Check for Profile Updates
 function Update-Profile {
     if (-not $global:canConnectToGitHub) {
-        Write-Host "Skipping profile update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
+        Write-Host "WARN: Unable to connect to the profile update server" -ForegroundColor Yellow
+        Pause
+        Clear-Host  
         return
     }
 
     try {
-        $url = "https://raw.githubusercontent.com/ChrisTitusTech/powershell-profile/main/Microsoft.PowerShell_profile.ps1"
+        $url = "https://raw.githubusercontent.com/patin-osu/powershell-profile/main/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
@@ -41,7 +32,9 @@ Update-Profile
 
 function Update-PowerShell {
     if (-not $global:canConnectToGitHub) {
-        Write-Host "Skipping PowerShell update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
+        Write-Host "WARN: Unable to connect to the PowerShell update server" -ForegroundColor Yellow
+        Pause
+        Clear-Host   
         return
     }
 
@@ -69,19 +62,6 @@ function Update-PowerShell {
 }
 Update-PowerShell
 
-function reload-profile {
-    & .\Microsoft.PowerShell_profile.ps1
-}
-
-
-# Admin Check and Prompt Customization
-$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-function prompt {
-    if ($isAdmin) { "[" + (Get-Location) + "] # " } else { "[" + (Get-Location) + "] $ " }
-}
-$adminSuffix = if ($isAdmin) { " [ADMIN]" } else { "" }
-$Host.UI.RawUI.WindowTitle = "PowerShell {0}$adminSuffix" -f $PSVersionTable.PSVersion.ToString()
-
 # Utility Functions
 function Test-CommandExists {
     param($command)
@@ -90,13 +70,9 @@ function Test-CommandExists {
 }
 
 # Editor Configuration
-$EDITOR = if (Test-CommandExists nvim) { 'nvim' }
-          elseif (Test-CommandExists pvim) { 'pvim' }
-          elseif (Test-CommandExists vim) { 'vim' }
-          elseif (Test-CommandExists vi) { 'vi' }
+$EDITOR = if (Test-CommandExists nano) { 'nano' }
           elseif (Test-CommandExists code) { 'code' }
           elseif (Test-CommandExists notepad++) { 'notepad++' }
-          elseif (Test-CommandExists sublime_text) { 'sublime_text' }
           else { 'notepad' }
 Set-Alias -Name vim -Value $EDITOR
 
@@ -111,51 +87,14 @@ function ff($name) {
 }
 
 # Network Utilities
-function Get-PubIP { (Invoke-WebRequest http://ifconfig.me/ip).Content }
-
-# System Utilities
-function uptime {
-    if ($PSVersionTable.PSVersion.Major -eq 5) {
-        Get-WmiObject win32_operatingsystem | Select-Object @{Name='LastBootUpTime'; Expression={$_.ConverttoDateTime($_.lastbootuptime)}} | Format-Table -HideTableHeaders
-    } else {
-        net statistics workstation | Select-String "since" | ForEach-Object { $_.ToString().Replace('Statistics since ', '') }
-    }
-}
-
-function r {
-    & $profile
-}
+function get-pubip { (Invoke-WebRequest http://ifconfig.me/ip).Content }
 
 function unzip ($file) {
     Write-Output("Extracting", $file, "to", $pwd)
     $fullFile = Get-ChildItem -Path $pwd -Filter $file | ForEach-Object { $_.FullName }
     Expand-Archive -Path $fullFile -DestinationPath $pwd
 }
-function hb {
-    if ($args.Length -eq 0) {
-        Write-Error "No file path specified."
-        return
-    }
-    
-    $FilePath = $args[0]
-    
-    if (Test-Path $FilePath) {
-        $Content = Get-Content $FilePath -Raw
-    } else {
-        Write-Error "File path does not exist."
-        return
-    }
-    
-    $uri = "http://bin.christitus.com/documents"
-    try {
-        $response = Invoke-RestMethod -Uri $uri -Method Post -Body $Content -ErrorAction Stop
-        $hasteKey = $response.key
-        $url = "http://bin.christitus.com/$hasteKey"
-        Write-Output $url
-    } catch {
-        Write-Error "Failed to upload the document. Error: $_"
-    }
-}
+
 function grep($regex, $dir) {
     if ( $dir ) {
         Get-ChildItem $dir | select-string $regex
@@ -164,7 +103,7 @@ function grep($regex, $dir) {
     $input | select-string $regex
 }
 
-function df {
+function dh {
     get-volume
 }
 
@@ -209,13 +148,11 @@ function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
 # Navigation Shortcuts
 function docs { Set-Location -Path $HOME\Documents }
 
-function dtop { Set-Location -Path $HOME\Desktop }
+function mcsrv { Set-Location -Path D:\Minecraft\Server }
 
-# Quick Access to Editing the Profile
-function ep { vim $PROFILE }
+function ~ { Set-Location -Path $HOME }
 
-# Simplified Process Management
-function k9 { Stop-Process -Name $args[0] }
+function gdrive { Set-Location -Path "$HOME\Google Drive Streaming\My Drive" }
 
 # Enhanced Listing
 function la { Get-ChildItem -Path . -Force | Format-Table -AutoSize }
@@ -223,13 +160,10 @@ function ll { Get-ChildItem -Path . -Force -Hidden | Format-Table -AutoSize }
 
 # Networking Utilities
 function flushdns { Clear-DnsClientCache }
-
 function ip { ipconfig }
 
-# Clipboard Utilities
-function cpy { Set-Clipboard $args[0] }
-
-function pst { Get-Clipboard }
+# Files Manager
+function fwr { mc }
 
 # Enhanced PowerShell Experience
 Set-PSReadLineOption -Colors @{
@@ -239,5 +173,7 @@ Set-PSReadLineOption -Colors @{
 }
 
 ## Final Line to set prompt
-oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/tonybaloney.omp.json | Invoke-Expression
+Clear-Host
+winfetch
+oh-my-posh init pwsh --config $env:userprofile\Documents\Powershell\tonybaloney.omp.json | Invoke-Expression
 
