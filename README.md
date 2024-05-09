@@ -6,4 +6,4 @@ A stylish and functional PowerShell profile that looks and feels almost as good 
 
 Figure it out lol (too lazy)
 
-# Original version of CTT's PowerShell profile is available through the 'orgianal' branch
+Original version of CTT's PowerShell profile is available through the 'orgianal' branch
