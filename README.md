@@ -2,19 +2,9 @@
 
 A stylish and functional PowerShell profile that looks and feels almost as good as a Linux terminal.
 
-## ⚡ One Line Install (Elevated PowerShell Recommended)
+## ⚡ Install
 
-Execute the following command in an elevated PowerShell window to install the PowerShell profile:
+Figure it out lol (too lazy)
 
-```
-irm "https://github.com/ChrisTitusTech/powershell-profile/raw/main/setup.ps1" | iex
-```
-
-## 🛠️ Fix the Missing Font
-
-After running the script, you'll find a downloaded `cove.zip` file in the folder you executed the script from. Follow these steps to install the required nerd fonts:
-
-1. Extract the `cove.zip` file.
-2. Locate and install the nerd fonts.
-
-Now, enjoy your enhanced and stylish PowerShell experience! 🚀
+## 🌍 Original Version?
+Original version of CTT's PowerShell profile is available through the 'orgianal' branch

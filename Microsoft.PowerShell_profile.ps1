@@ -221,32 +221,10 @@ function k9 { Stop-Process -Name $args[0] }
 function la { Get-ChildItem -Path . -Force | Format-Table -AutoSize }
 function ll { Get-ChildItem -Path . -Force -Hidden | Format-Table -AutoSize }
 
-# Git Shortcuts
-function gs { git status }
-
-function ga { git add . }
-
-function gc { param($m) git commit -m "$m" }
-
-function gp { git push }
-
-function g { z Github }
-
-function gcom {
-    git add .
-    git commit -m "$args"
-}
-function lazyg {
-    git add .
-    git commit -m "$args"
-    git push
-}
-
-# Quick Access to System Information
-function sysinfo { Get-ComputerInfo }
-
 # Networking Utilities
 function flushdns { Clear-DnsClientCache }
+
+function ip { ipconfig }
 
 # Clipboard Utilities
 function cpy { Set-Clipboard $args[0] }
