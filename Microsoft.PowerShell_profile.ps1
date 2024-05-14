@@ -2,11 +2,11 @@
 ## Modified by Patin Muangjan (patin-osu)
 
 # Initial GitHub.com connectivity check with 1 second timeout
-$ghcontest = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
+$canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
 # Check for Profile Updates
 function Update-Profile {
-    if (-not $global:ghcontest) {
+    if (-not $global:canConnectToGitHub) {
         Write-Host "WARN: Unable to connect to the profile update server" -ForegroundColor Yellow
         Pause
         Clear-Host  
@@ -31,7 +31,7 @@ function Update-Profile {
 Update-Profile
 
 function Update-PowerShell {
-    if (-not $global:ghcontest) {
+    if (-not $global:canConnectToGitHub) {
         Write-Host "WARN: Unable to connect to the PowerShell update server" -ForegroundColor Yellow
         Pause
         Clear-Host   
@@ -103,7 +103,7 @@ function grep($regex, $dir) {
     $input | select-string $regex
 }
 
-function free {
+function dh {
     get-volume
 }
 
@@ -148,9 +148,11 @@ function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
 # Navigation Shortcuts
 function docs { Set-Location -Path $HOME\Documents }
 
-function mcsrv { Set-Location -Path D:\Minecraft\Server }
+function mcsrv { Set-Location -Path D:\Minecraft\Server\$%args }
 
 function ~ { Set-Location -Path $HOME }
+
+function dev { Set-Location -Path D:\Development\$args }
 
 function gdrive { Set-Location -Path "$HOME\Google Drive Streaming\My Drive" }
 
@@ -165,7 +167,7 @@ function ip { ipconfig }
 # Files Manager
 function fwr { mc }
 
-# Git command
+# Lazygit & other git command
 function lz { lazygit }
 
 # Enhanced PowerShell Experience
