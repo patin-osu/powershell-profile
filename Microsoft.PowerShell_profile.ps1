@@ -148,7 +148,7 @@ function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
 # Navigation Shortcuts
 function docs { Set-Location -Path $HOME\Documents }
 
-function mcsrv { Set-Location -Path D:\Minecraft\Server\$%args }
+function mcsrv { Set-Location -Path D:\Minecraft\Server\$args }
 
 function ~ { Set-Location -Path $HOME }
 
