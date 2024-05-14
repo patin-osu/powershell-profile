@@ -2,11 +2,11 @@
 ## Modified by Patin Muangjan (patin-osu)
 
 # Initial GitHub.com connectivity check with 1 second timeout
-$canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
+$ghcontest = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
 # Check for Profile Updates
 function Update-Profile {
-    if (-not $global:canConnectToGitHub) {
+    if (-not $global:ghcontest) {
         Write-Host "WARN: Unable to connect to the profile update server" -ForegroundColor Yellow
         Pause
         Clear-Host  
@@ -31,7 +31,7 @@ function Update-Profile {
 Update-Profile
 
 function Update-PowerShell {
-    if (-not $global:canConnectToGitHub) {
+    if (-not $global:ghcontest) {
         Write-Host "WARN: Unable to connect to the PowerShell update server" -ForegroundColor Yellow
         Pause
         Clear-Host   
@@ -103,7 +103,7 @@ function grep($regex, $dir) {
     $input | select-string $regex
 }
 
-function dh {
+function free {
     get-volume
 }
 
@@ -164,6 +164,9 @@ function ip { ipconfig }
 
 # Files Manager
 function fwr { mc }
+
+# Git command
+function lz { lazygit }
 
 # Enhanced PowerShell Experience
 Set-PSReadLineOption -Colors @{
