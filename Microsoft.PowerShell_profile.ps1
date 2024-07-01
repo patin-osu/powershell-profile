@@ -74,7 +74,7 @@ $EDITOR = if (Test-CommandExists nano) { 'nano' }
           elseif (Test-CommandExists code) { 'code' }
           elseif (Test-CommandExists notepad++) { 'notepad++' }
           else { 'notepad' }
-Set-Alias -Name vim -Value $EDITOR
+Set-Alias -Name edit -Value $EDITOR
 
 function Edit-Profile {
     vim $PROFILE.CurrentUserAllHosts
@@ -154,7 +154,7 @@ function ~ { Set-Location -Path $HOME }
 
 function dev { Set-Location -Path D:\Development\$args }
 
-function gdrive { Set-Location -Path "$HOME\Google Drive Streaming\My Drive" }
+function gdrive { Set-Location -Path "$HOME\.gdstr\My Drive" }
 
 # Enhanced Listing
 function la { Get-ChildItem -Path . -Force | Format-Table -AutoSize }
@@ -179,6 +179,6 @@ Set-PSReadLineOption -Colors @{
 
 ## Final Line to set prompt
 Clear-Host
-winfetch
+fastfetch -c C:\ProgramData\.config\fastfetch\settings.jsonc
 oh-my-posh init pwsh --config $env:userprofile\Documents\Powershell\tonybaloney.omp.json | Invoke-Expression
 
